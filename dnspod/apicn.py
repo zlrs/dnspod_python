@@ -13,6 +13,11 @@ except Exception:
 class DNSPodApiException(Exception):
     pass
 
+class DomainOrDomainId:
+    def __init__(self, domain: str = '', domain_id: int = 0):
+        self.domain = domain
+        self.domain_id = domain_id
+ 
 
 class ApiCn:
     def __init__(self, email=None, password=None, login_token=None, **kw):
@@ -88,8 +93,13 @@ class DomainList(ApiCn):
 
 
 class _DomainApiBase(ApiCn):
-    def __init__(self, domain_id, **kw):
-        kw.update(dict(domain_id=domain_id))
+    def __init__(self, domain_or_domain_id: DomainOrDomainId, **kw):
+        if domain_or_domain_id.domain_id != 0:
+            kw.update(dict(domain_id=domain_or_domain_id.domain_id))
+        elif len(domain_or_domain_id.domain) != 0:
+            kw.update(dict(domain=domain_or_domain_id.domain))
+        else:
+            assert(False)
         ApiCn.__init__(self, **kw)
 
 
